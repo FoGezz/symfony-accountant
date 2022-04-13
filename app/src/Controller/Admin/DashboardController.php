@@ -38,7 +38,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Symfony Docker');
+            ->setTitle('Бухгалтерия');
     }
 
     public function configureMenuItems(): iterable
@@ -46,7 +46,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Отделы', 'fas fa-list', Departments::class);
         yield MenuItem::linkToCrud('Сотрудники', 'fas fa-list', Employees::class);
-        yield MenuItem::linkToCrud('Сотрудники в отделах', 'fas fa-list', DepartmentsEmployees::class);
         yield MenuItem::linkToCrud('Проекты', 'fas fa-list', Projects::class);
     }
 }

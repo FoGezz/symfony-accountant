@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Employees
@@ -51,11 +54,27 @@ class Employees
     private string|null $position;
 
     /**
-     * @var int|null
+     * @var int
      *
      * @ORM\Column(name="salary", type="smallint", nullable=true)
      */
-    private string|null $salary;
+    private int $salary;
+
+    /**
+     * @var Collection<Departments>
+     * @ORM\ManyToMany(targetEntity="Departments", inversedBy="employees")
+     * @ORM\JoinTable(name="departments_employees",
+     *      joinColumns={@ORM\JoinColumn(name="employee_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="department_id", referencedColumnName="id", unique=true)}
+     * )
+     *
+     */
+    private Collection $departments;
+
+    #[Pure] public function __construct()
+    {
+        $this->departments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -115,11 +134,34 @@ class Employees
         return $this->salary;
     }
 
-    public function setSalary(?int $salary): self
+    public function setSalary(int $salary): self
     {
         $this->salary = $salary;
 
         return $this;
+    }
+
+    #[Pure] public function __toString(): string
+    {
+        return $this->getLastName() . ' ' . $this->getFirstName() . ' ' . $this->getPatherName();
+    }
+
+    /**
+     * @param Collection $departments
+     * @return Employees
+     */
+    public function setDepartments(Collection $departments): Employees
+    {
+        $this->departments = $departments;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDepartments(): Collection
+    {
+        return $this->departments;
     }
 
 
