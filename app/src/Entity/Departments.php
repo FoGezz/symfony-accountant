@@ -35,10 +35,6 @@ class Departments
     /**
      * @var Collection<Employees>
      * @ORM\ManyToMany(targetEntity="Employees", mappedBy="departments")
-     * @ORM\JoinTable(name="departments_employees",
-     *     joinColumns={@ORM\JoinColumn(name="department_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="employee_id", referencedColumnName="id", unique=true)}
-     * )
      */
     private Collection $employees;
 

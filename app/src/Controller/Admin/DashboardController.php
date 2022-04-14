@@ -8,9 +8,13 @@ use App\Entity\Projects;
 use App\Service\ProfitCalculator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -22,7 +26,7 @@ class DashboardController extends AbstractDashboardController
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin')]
     public function index(): Response
     {
         $incompleteProjects = $this->profitCalculator->getProfitForProjects();
@@ -49,6 +53,20 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Бухгалтерия');
+    }
+
+    public function configureUserMenu(UserInterface $user): UserMenu
+    {
+        $userMenuItems = [];
+
+        if (class_exists(LogoutUrlGenerator::class)) {
+            $userMenuItems[] = MenuItem::section();
+        }
+
+        if ($this->isGranted(Permission::EA_EXIT_IMPERSONATION)) {
+            $userMenuItems[] = MenuItem::linkToExitImpersonation('__ea__user.exit_impersonation', 'fa-user-lock');
+        }
+        return parent::configureUserMenu($user)->setMenuItems($userMenuItems);
     }
 
     public function configureMenuItems(): iterable
