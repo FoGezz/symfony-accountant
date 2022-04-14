@@ -3,9 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Departments;
-use App\Entity\DepartmentsEmployees;
 use App\Entity\Employees;
 use App\Entity\Projects;
+use App\Service\ProfitCalculator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -14,10 +14,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private ProfitCalculator $profitCalculator,
+    )
+    {}
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-
+        $incompleteProjects = $this->profitCalculator->getProfitForProjects();
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
         // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -32,7 +40,9 @@ class DashboardController extends AbstractDashboardController
         // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
         // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
         //
-         return $this->render('admin/index.html.twig');
+         return $this->render('admin/index.html.twig', [
+             'incompleteProjects' => $incompleteProjects,
+         ]);
     }
 
     public function configureDashboard(): Dashboard

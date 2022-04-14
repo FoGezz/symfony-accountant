@@ -1,1 +1,20 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    Список незавершенных проектов:
+{% endblock %}
+
+{% block main %}
+    <table class="table-bordered">
+        <tr>
+            <th><b>Название проекта</b></th>
+            <th><b>Предполагаемая прибыль</b></th>
+        </tr>
+        {% for project in incompleteProjects %}
+            <tr>
+                <td>{{ project.name }}</td>
+                <td>{{ project.income }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
